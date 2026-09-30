@@ -1,0 +1,9 @@
+# Trained model (~256 MB, over GitHub's 100 MB file limit). Recreate with: python app/train.py
+app/model/
+
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store
+.ipynb_checkpoints/

@@ -1,0 +1,9 @@
+torch
+transformers
+scikit-learn
+pandas
+joblib
+fastapi
+uvicorn
+requests
+beautifulsoup4

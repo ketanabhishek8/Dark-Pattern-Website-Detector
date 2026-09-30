@@ -1,0 +1,26 @@
+# Dark Pattern Detector
+
+Abhishek Joshi (16014124023) and Shaurya Ghorpade (16014124017), Artificial Intelligence course.
+
+| File | What it is |
+|---|---|
+| `report.docx` | The 3-page report |
+| `dark_pattern_detector.ipynb` | Experiments: TF-IDF baselines vs DistilBERT (run on Google Colab with a T4 GPU) |
+| `app/` | The web dashboard: paste a product page link and see its dark patterns |
+| `figures/` | Charts and results used in the report |
+
+## Run the dashboard
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r app/requirements.txt
+python app/train.py      # about 3 minutes on an M-series Mac, saves the model to app/model/
+python app/server.py     # then open http://localhost:8000
+```
+
+The trained model (`app/model/`, about 256 MB) is too big for GitHub, so it isn't in the repo. Run `train.py` once after cloning to create it. It downloads the dataset, trains DistilBERT and saves the model. It works without a GPU, just more slowly.
+
+Open http://localhost:8000/?demo to scan the built-in sample shop straight away. That is the safest option for a live demo, because some real sites block automated requests. For those sites, use **Paste text** instead.
+
+To re-check the numbers in Table 2 of the report: `python app/evaluate.py`
