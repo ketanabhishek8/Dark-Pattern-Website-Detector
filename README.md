@@ -4,7 +4,7 @@ Abhishek Joshi and Shaurya Ghorpade, Artificial Intelligence course.
 
 | File | What it is |
 |---|---|
-| `report.docx` | The 3-page report |
+| `report.pdf` | The 3-page project report (`report.docx` is the editable Word version) |
 | `dark_pattern_detector.ipynb` | Experiments: TF-IDF baselines vs DistilBERT (run on Google Colab with a T4 GPU) |
 | `app/` | The web dashboard: paste a product page link and see its dark patterns |
 | `figures/` | Charts and results used in the report |
