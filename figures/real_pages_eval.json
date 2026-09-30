@@ -1,0 +1,144 @@
+{
+  "pages": {
+    "dev": [
+      "amazon_iqoo",
+      "amazon_B0H1X19T3Y",
+      "amazon_B0B9H3PMFM",
+      "snapdeal_5555224671",
+      "snapdeal_0175786139"
+    ],
+    "test": [
+      "amazon_B0HCBYMC8D",
+      "amazon_B09XHYSV9C",
+      "amazon_B0HJ255RGS",
+      "snapdeal_3546748876",
+      "snapdeal_9324185659"
+    ]
+  },
+  "lines_per_page": {
+    "v1": 453,
+    "v2": 138
+  },
+  "dev_threshold_sweep": [
+    {
+      "threshold": 0.5,
+      "flagged": 50,
+      "false_alarms": 43,
+      "false_alarms_per_page": 8.6,
+      "precision": 0.14,
+      "recall": 0.875,
+      "f1": 0.2414
+    },
+    {
+      "threshold": 0.6,
+      "flagged": 43,
+      "false_alarms": 36,
+      "false_alarms_per_page": 7.2,
+      "precision": 0.1628,
+      "recall": 0.875,
+      "f1": 0.2745
+    },
+    {
+      "threshold": 0.7,
+      "flagged": 38,
+      "false_alarms": 31,
+      "false_alarms_per_page": 6.2,
+      "precision": 0.1842,
+      "recall": 0.875,
+      "f1": 0.3043
+    },
+    {
+      "threshold": 0.8,
+      "flagged": 30,
+      "false_alarms": 23,
+      "false_alarms_per_page": 4.6,
+      "precision": 0.2333,
+      "recall": 0.875,
+      "f1": 0.3684
+    },
+    {
+      "threshold": 0.9,
+      "flagged": 23,
+      "false_alarms": 17,
+      "false_alarms_per_page": 3.4,
+      "precision": 0.2609,
+      "recall": 0.75,
+      "f1": 0.3871
+    },
+    {
+      "threshold": 0.95,
+      "flagged": 14,
+      "false_alarms": 10,
+      "false_alarms_per_page": 2.0,
+      "precision": 0.2857,
+      "recall": 0.5,
+      "f1": 0.3636
+    },
+    {
+      "threshold": 0.97,
+      "flagged": 12,
+      "false_alarms": 8,
+      "false_alarms_per_page": 1.6,
+      "precision": 0.3333,
+      "recall": 0.5,
+      "f1": 0.4
+    },
+    {
+      "threshold": 0.98,
+      "flagged": 7,
+      "false_alarms": 4,
+      "false_alarms_per_page": 0.8,
+      "precision": 0.4286,
+      "recall": 0.375,
+      "f1": 0.4
+    },
+    {
+      "threshold": 0.99,
+      "flagged": 2,
+      "false_alarms": 0,
+      "false_alarms_per_page": 0.0,
+      "precision": 1.0,
+      "recall": 0.25,
+      "f1": 0.4
+    },
+    {
+      "threshold": 0.995,
+      "flagged": 2,
+      "false_alarms": 0,
+      "false_alarms_per_page": 0.0,
+      "precision": 1.0,
+      "recall": 0.25,
+      "f1": 0.4
+    }
+  ],
+  "chosen_threshold": 0.97,
+  "test": {
+    "old extractor, threshold 0.5": {
+      "threshold": 0.5,
+      "flagged": 227,
+      "false_alarms": 214,
+      "false_alarms_per_page": 42.8,
+      "precision": 0.0573,
+      "recall": 1.0,
+      "f1": 0.1083
+    },
+    "new extractor, threshold 0.5": {
+      "threshold": 0.5,
+      "flagged": 45,
+      "false_alarms": 36,
+      "false_alarms_per_page": 7.2,
+      "precision": 0.2,
+      "recall": 1.0,
+      "f1": 0.3333
+    },
+    "new extractor, threshold 0.97": {
+      "threshold": 0.97,
+      "flagged": 15,
+      "false_alarms": 9,
+      "false_alarms_per_page": 1.8,
+      "precision": 0.4,
+      "recall": 0.6667,
+      "f1": 0.5
+    }
+  }
+}

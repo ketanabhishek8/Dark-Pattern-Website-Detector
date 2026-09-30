@@ -11,6 +11,9 @@ sys.path.insert(0, str(Path(__file__).parent))
 import detector
 from india_data import HOLDOUT
 
+# The dataset is half dark patterns, so 0.5 is the right cut-off here (the dashboard uses detector.THRESHOLD)
+DATASET_THRESHOLD = 0.5
+
 model_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else detector.MODEL_DIR
 detector.MODEL_DIR = model_dir
 d = detector.Detector()
@@ -21,7 +24,7 @@ _, test_df = train_test_split(df, test_size=0.2, random_state=42, stratify=df["c
 
 
 def scores(texts, labels):
-    pred = [int(p > detector.THRESHOLD) for p in d.dark_probabilities(list(texts))]
+    pred = [int(p > DATASET_THRESHOLD) for p in d.dark_probabilities(list(texts))]
     p, r, f, _ = precision_recall_fscore_support(labels, pred, average="binary", zero_division=0)
     return {"accuracy": accuracy_score(labels, pred), "precision": p, "recall": r, "f1": f,
             "false_positives": int(sum(1 for y, q in zip(labels, pred) if y == 0 and q == 1)),

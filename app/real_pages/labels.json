@@ -1,0 +1,78 @@
+{
+  "labelling_guide": "A line is a dark pattern if it pressures the shopper: a countdown or deadline (Urgency), a low-stock or high-demand claim (Scarcity), or a count of other shoppers' purchases, views or carts (Social Proof), or guilt-tripping / pre-selected choices (Misdirection). Plain prices and discounts, delivery dates, badges (Amazon's Choice, #1 Best Seller), rating summaries, policies and product details are not. Every line on every page was read; lines not listed under 'dark' are labelled not dark. Snapshots taken 30 September 2026; the HTML is kept locally in real_pages/html/ (not in git).",
+  "pages": {
+    "amazon_iqoo": {
+      "url": "https://www.amazon.in/iQOO-Dimensity-Processor-OriginOS-Security/dp/B0HG929FR4/",
+      "split": "dev",
+      "dark": {
+        "Or fastest delivery Tomorrow 6 am - 8 am. Order within 9 hrs. Details": "Urgency",
+        "100K+ recent orders from this brand": "Social Proof"
+      }
+    },
+    "amazon_B0H1X19T3Y": {
+      "url": "https://www.amazon.in/dp/B0H1X19T3Y",
+      "split": "dev",
+      "dark": {
+        "Or fastest delivery Tomorrow 6 am - 8 am. Order within 8 hrs 59 mins. Details": "Urgency",
+        "1K+ bought in past month": "Social Proof",
+        "Only 2 left in stock.": "Scarcity",
+        "100K+ recent orders from this brand": "Social Proof"
+      }
+    },
+    "amazon_B0B9H3PMFM": {
+      "url": "https://www.amazon.in/dp/B0B9H3PMFM",
+      "split": "dev",
+      "dark": {
+        "FREE delivery Today. Order within 14 mins. Details": "Urgency",
+        "10K+ recent orders from this brand": "Social Proof"
+      }
+    },
+    "snapdeal_5555224671": {
+      "url": "https://www.snapdeal.com/product/webric-white-cotton-blend-mens/7493990465555224671",
+      "split": "dev",
+      "dark": {}
+    },
+    "snapdeal_0175786139": {
+      "url": "https://www.snapdeal.com/product/morsad-yellow-cotton-blend-mens/640175786139",
+      "split": "dev",
+      "dark": {}
+    },
+    "amazon_B0HCBYMC8D": {
+      "url": "https://www.amazon.in/dp/B0HCBYMC8D",
+      "split": "test",
+      "dark": {
+        "Or fastest delivery Tomorrow 6 am - 8 am. Order within 8 hrs 59 mins. Details": "Urgency",
+        "900+ bought in past month": "Social Proof",
+        "Limited time deal": "Urgency",
+        "5K+ recent orders from this brand": "Social Proof"
+      }
+    },
+    "amazon_B09XHYSV9C": {
+      "url": "https://www.amazon.in/dp/B09XHYSV9C",
+      "split": "test",
+      "dark": {
+        "Limited time deal": "Urgency",
+        "Only 1 left in stock.": "Scarcity",
+        "50K+ recent orders from this brand": "Social Proof"
+      }
+    },
+    "amazon_B0HJ255RGS": {
+      "url": "https://www.amazon.in/dp/B0HJ255RGS",
+      "split": "test",
+      "dark": {
+        "Or fastest delivery Tomorrow, 1 October. Order within 3 hrs 14 mins. Details": "Urgency",
+        "100K+ recent orders from this brand": "Social Proof"
+      }
+    },
+    "snapdeal_3546748876": {
+      "url": "https://www.snapdeal.com/product/growwax-dark-green-cotton-blend/6052838583546748876",
+      "split": "test",
+      "dark": {}
+    },
+    "snapdeal_9324185659": {
+      "url": "https://www.snapdeal.com/product/lenia-light-blue-blended-mens/5764608179324185659",
+      "split": "test",
+      "dark": {}
+    }
+  }
+}

@@ -25,6 +25,8 @@ Open http://localhost:8000/?demo to scan the built-in sample shop straight away.
 
 To re-check the numbers in Table 2 of the report: `python app/evaluate.py`
 
+To check the whole pipeline on real product pages: `python app/eval_real_pages.py`. It uses 10 hand-labelled Amazon.in and Snapdeal pages (`app/real_pages/labels.json`), picks the decision threshold on the 5 dev pages and reports on the 5 test pages. The page snapshots stay local (`app/real_pages/html/`, not in git), so this needs the original machine or fresh snapshots.
+
 ## Deploy to Hugging Face Spaces
 
 The app runs as a Docker Space (see `Dockerfile`). When hosted, it refuses links to private network addresses.
