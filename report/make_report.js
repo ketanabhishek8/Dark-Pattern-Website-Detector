@@ -4,8 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const {
   Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, Table, TableRow, TableCell, WidthType,
-  ShadingType, BorderStyle, ImageRun, LevelFormat, ExternalHyperlink, Footer, PageNumber, TabStopType,
-  VerticalAlign,
+  ShadingType, BorderStyle, ImageRun, LevelFormat, ExternalHyperlink, VerticalAlign,
 } = require("docx");
 
 const FIG = path.join(__dirname, "..", "figures");
@@ -14,11 +13,9 @@ const WITH_IDS = process.argv.includes("--with-ids");
 const MARGIN = 1020; // 1.8 cm
 const W = 11906 - 2 * MARGIN; // content width in DXA
 
-// Colours shared with the dashboard
-const NAVY = "152033", VIOLET = "4A3AA7", LAVENDER = "E6E3F7", LAVENDER_TEXT = "C9C3F2",
-  PAPER = "EEF1F5", ZEBRA = "F6F7FA", LINE = "D8DDE5", GREY = "5C6678";
-const CAT = { Scarcity: "2A78D6", Urgency: "EB6834", "Social Proof": "1BAF7A", Misdirection: "EDA100", Other: "E87BA4" };
-const SERIF = "Georgia", SANS = "Calibri";
+// Classic report styling: Calibri, navy headings and table headers, thin grey rules
+const NAVY = "1F3864", GREY = "555555", RULE = "BFBFBF", CODE_BG = "F2F4F7";
+const FONT = "Calibri";
 
 const load = (f) => JSON.parse(fs.readFileSync(path.join(FIG, f), "utf8"));
 const NB = load("results.json");                          // notebook: baselines, random split
@@ -33,117 +30,71 @@ const pct = (x, d = 1) => `${(x * 100).toFixed(d)}%`;
 // ---------- building blocks ----------
 function runs(text, opts = {}) {
   return text.split(/(\*\*[^*]+\*\*)/).filter(Boolean).map((part) => part.startsWith("**")
-    ? new TextRun({ text: part.slice(2, -2), bold: true, color: NAVY, ...opts })
+    ? new TextRun({ text: part.slice(2, -2), bold: true, ...opts })
     : new TextRun({ text: part, ...opts }));
 }
-const p = (text, extra = {}) => new Paragraph({ children: runs(text), alignment: AlignmentType.JUSTIFIED, spacing: { after: 80 }, ...extra });
-const h1 = (num, title) => new Paragraph({
-  heading: HeadingLevel.HEADING_1, keepNext: true,
-  border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: LINE, space: 2 } },
-  children: [...(num ? [new TextRun({ text: `${num}  `, color: VIOLET })] : []), new TextRun(title)],
-});
+const p = (text, extra = {}) => new Paragraph({ children: runs(text), alignment: AlignmentType.JUSTIFIED, spacing: { after: 90 }, ...extra });
+const h1 = (num, title) => new Paragraph({ text: num ? `${num}. ${title}` : title, heading: HeadingLevel.HEADING_1, keepNext: true });
 const bullet = (text) => new Paragraph({ children: runs(text), numbering: { reference: "bullets", level: 0 }, alignment: AlignmentType.JUSTIFIED, spacing: { after: 30 } });
 const caption = (label, text) => new Paragraph({
-  alignment: AlignmentType.CENTER, spacing: { before: 50, after: 130 },
-  children: [new TextRun({ text: `${label}  `, bold: true, color: VIOLET, size: 16 }), new TextRun({ text, italics: true, color: GREY, size: 16 })],
+  alignment: AlignmentType.CENTER, spacing: { before: 40, after: 140 },
+  children: runs(`${label.replace(/\.$/, ":")} ${text}`, { italics: true, size: 17, color: GREY }),
 });
 const image = (file, w, h) => new Paragraph({ alignment: AlignmentType.CENTER, keepNext: true, children: [
   new ImageRun({ type: "png", data: fs.readFileSync(path.join(FIG, file)), transformation: { width: w, height: h } })] });
-const none = { style: BorderStyle.NONE, size: 0, color: "FFFFFF" };
-const noBorders = { top: none, bottom: none, left: none, right: none };
-const hair = { style: BorderStyle.SINGLE, size: 4, color: LINE };
+const line = { style: BorderStyle.SINGLE, size: 4, color: RULE };
+const grid = { top: line, bottom: line, left: line, right: line };
 
-function cell(text, width, { fill, bold, color, align = AlignmentType.LEFT, size = 17, font, borders } = {}) {
+function cell(text, width, { head = false, bold = false, align = AlignmentType.CENTER } = {}) {
   return new TableCell({
-    width: { size: width, type: WidthType.DXA }, verticalAlign: VerticalAlign.CENTER,
-    shading: fill ? { type: ShadingType.CLEAR, fill, color: "auto" } : undefined,
-    borders: borders || { top: none, left: none, right: none, bottom: hair },
-    margins: { top: 45, bottom: 45, left: 90, right: 90 },
-    children: [new Paragraph({ alignment: align, keepNext: true, children: [new TextRun({ text, bold, color, size, font })] })],
+    width: { size: width, type: WidthType.DXA }, borders: grid, verticalAlign: VerticalAlign.CENTER,
+    shading: head ? { type: ShadingType.CLEAR, fill: NAVY, color: "auto" } : undefined,
+    margins: { top: 40, bottom: 40, left: 90, right: 90 },
+    children: [new Paragraph({ alignment: head ? AlignmentType.CENTER : align, keepNext: true,
+      children: [new TextRun({ text, bold: head || bold, color: head ? "FFFFFF" : undefined, size: 18 })] })],
   });
 }
 
-// A data table: navy header, zebra rows, an optional highlighted row
-function table(header, rows, widths, { highlight = -1, numericFrom = 1 } = {}) {
-  const align = (i) => (i >= numericFrom ? AlignmentType.CENTER : AlignmentType.LEFT);
+// A data table: navy header row, grey grid, an optional bold row
+function table(header, rows, widths, { highlight = -1, leftCols = 1 } = {}) {
+  const align = (i) => (i < leftCols ? AlignmentType.LEFT : AlignmentType.CENTER);
   return new Table({
-    width: { size: widths.reduce((a, b) => a + b), type: WidthType.DXA }, columnWidths: widths,
+    width: { size: widths.reduce((a, b) => a + b), type: WidthType.DXA }, columnWidths: widths, alignment: AlignmentType.CENTER,
     rows: [
-      new TableRow({ tableHeader: true, cantSplit: true, children: header.map((t, i) =>
-        cell(t, widths[i], { fill: NAVY, bold: true, color: "FFFFFF", align: align(i), size: 16, borders: noBorders })) }),
-      ...rows.map((r, ri) => new TableRow({ cantSplit: true, children: r.map((t, i) => cell(t, widths[i], {
-        fill: ri === highlight ? LAVENDER : ri % 2 ? ZEBRA : undefined, bold: ri === highlight, align: align(i) })) })),
+      new TableRow({ tableHeader: true, cantSplit: true, children: header.map((t, i) => cell(t, widths[i], { head: true })) }),
+      ...rows.map((r, ri) => new TableRow({ cantSplit: true, children: r.map((t, i) =>
+        cell(t, widths[i], { bold: ri === highlight, align: align(i) })) })),
     ],
   });
 }
 
-// ---------- title band, abstract, key figures ----------
+// ---------- title and abstract ----------
 const authors = WITH_IDS
-  ? "Abhishek Joshi (16014124023)  and  Shaurya Ghorpade (16014124017)"
-  : "Abhishek Joshi  and  Shaurya Ghorpade";
-const titleBand = new Table({
-  width: { size: W, type: WidthType.DXA }, columnWidths: [W],
-  rows: [new TableRow({ children: [new TableCell({
-    width: { size: W, type: WidthType.DXA }, shading: { type: ShadingType.CLEAR, fill: NAVY, color: "auto" },
-    borders: { top: none, bottom: none, right: none, left: { style: BorderStyle.SINGLE, size: 48, color: VIOLET } },
-    margins: { top: 230, bottom: 210, left: 320, right: 320 },
-    children: [
-      new Paragraph({ spacing: { after: 40 }, children: [new TextRun({ text: "Dark Pattern Detector", font: SERIF, bold: true, size: 44, color: "FFFFFF" })] }),
-      new Paragraph({ spacing: { after: 140 }, children: [new TextRun({ text: "Finding manipulative text on Indian e-commerce product pages with NLP", font: SERIF, italics: true, size: 23, color: LAVENDER_TEXT })] }),
-      new Paragraph({ children: [new TextRun({ text: authors, size: 18, color: "FFFFFF", bold: true })] }),
-      new Paragraph({ children: [new TextRun({ text: "Artificial Intelligence course project   |   30 September 2026", size: 17, color: LAVENDER_TEXT })] }),
-    ],
-  })] })],
-});
+  ? "Abhishek Joshi (16014124023)  &  Shaurya Ghorpade (16014124017)"
+  : "Abhishek Joshi  &  Shaurya Ghorpade";
+const title = [
+  new Paragraph({ heading: HeadingLevel.TITLE, alignment: AlignmentType.CENTER, children: [new TextRun("Dark Pattern Detector")] }),
+  new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 60 },
+    children: [new TextRun({ text: "Detecting Manipulative Text on Indian E-Commerce Websites using NLP", size: 25, color: "404040" })] }),
+  new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 30 }, children: runs(`Submitted by: ${authors}`) }),
+  new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 160 }, children: runs("Course: Artificial Intelligence   |   Date: 30 September 2026") }),
+];
 
 const abstract = new Paragraph({
-  alignment: AlignmentType.JUSTIFIED, spacing: { before: 200, after: 140 },
-  shading: { type: ShadingType.CLEAR, fill: PAPER, color: "auto" },
-  border: { left: { style: BorderStyle.SINGLE, size: 24, color: VIOLET, space: 8 } },
-  indent: { left: 170, right: 60 },
-  children: runs(`**Abstract.** Dark patterns are pieces of interface text designed to pressure shoppers, such as fake countdown timers and false stock warnings. We fine-tuned DistilBERT to label each line of a product page as either not a dark pattern or one of five dark pattern types. On a benchmark of 2,356 e-commerce texts, split so that the test set contains only websites the model never saw, it reaches ${pct(FINAL.original_test.f1)} F1 and names the type correctly ${pct(FINAL.category_on_dark_test.accuracy)} of the time. Because the benchmark comes from Western sites, we also evaluated the whole system on hand-labelled Amazon.in, Snapdeal and Indian brand-store pages. Better page parsing, a calibrated decision threshold and retraining on mistakes mined from real pages cut false alarms from 42.8 to 0 per page on held-out test pages. The model powers a web dashboard that scans any product page from its link.`, { size: 19 }),
+  alignment: AlignmentType.JUSTIFIED, spacing: { after: 120 }, indent: { left: 400, right: 400 },
+  border: { top: { style: BorderStyle.SINGLE, size: 4, color: RULE, space: 6 }, bottom: { style: BorderStyle.SINGLE, size: 4, color: RULE, space: 6 } },
+  children: runs(`**Abstract.** Dark patterns are pieces of interface text designed to pressure shoppers, such as fake countdown timers and false stock warnings. We fine-tuned DistilBERT to label each line of a product page as either not a dark pattern or one of five dark pattern types. On a benchmark of 2,356 e-commerce texts, split so that the test set contains only websites the model never saw, it reaches ${pct(FINAL.original_test.f1)} F1 and names the type correctly ${pct(FINAL.category_on_dark_test.accuracy)} of the time. Because the benchmark comes from Western sites, we also evaluated the whole system on hand-labelled Amazon.in, Snapdeal and Indian brand-store pages. Better page parsing, a calibrated decision threshold and retraining on mistakes mined from real pages cut false alarms from 42.8 to 0 per page on held-out test pages, and on a live Amazon.in phone page flags fell from 92 to 2, both real dark patterns. The model powers a web dashboard that scans any product page from its link.`, { size: 19 }),
 });
-
-function tiles(items) {
-  const w = Math.floor(W / items.length);
-  return new Table({
-    width: { size: w * items.length, type: WidthType.DXA }, columnWidths: items.map(() => w),
-    rows: [new TableRow({ children: items.map(([big, small]) => new TableCell({
-      width: { size: w, type: WidthType.DXA },
-      borders: { top: none, bottom: none, right: { style: BorderStyle.SINGLE, size: 24, color: "FFFFFF" }, left: { style: BorderStyle.SINGLE, size: 18, color: VIOLET } },
-      shading: { type: ShadingType.CLEAR, fill: LAVENDER, color: "auto" }, margins: { top: 90, bottom: 90, left: 160, right: 120 },
-      children: [
-        new Paragraph({ children: [new TextRun({ text: big, font: SERIF, bold: true, size: 30, color: VIOLET })] }),
-        new Paragraph({ children: [new TextRun({ text: small, size: 16, color: NAVY })] }),
-      ],
-    })) })],
-  });
-}
 
 // ---------- tables ----------
-const TYPES = [
-  ["Scarcity", "Claims stock is running out or demand is high", "Only 2 left in stock!", "418"],
-  ["Urgency", "Puts a real or fake deadline on the decision", "Deal ends in 04:59", "210"],
-  ["Social Proof", "Uses other shoppers' activity as pressure", "27 people bought this in the last hour", "312"],
-  ["Misdirection", "Guilt-trips or steers the choice", "No thanks, I don't like saving money", "195"],
-  ["Other", "Obstruction, sneaking and forced action, merged because they are rare", "", "43"],
-  ["Not a dark pattern", "Ordinary shop text", "Write a review", "1,178"],
-];
-const typeWidths = [200, 1700, 3700, 3166, 1100];
-const typesTable = new Table({
-  width: { size: W, type: WidthType.DXA }, columnWidths: typeWidths,
-  rows: [
-    new TableRow({ tableHeader: true, children: ["", "Type", "What it does", "Example from the dataset", "Texts"].map((t, i) =>
-      cell(t, typeWidths[i], { fill: NAVY, bold: true, color: "FFFFFF", size: 16, borders: noBorders, align: i === 4 ? AlignmentType.CENTER : AlignmentType.LEFT })) }),
-    ...TYPES.map(([type, what, ex, n], ri) => new TableRow({ cantSplit: true, children: [
-      cell("", typeWidths[0], { fill: CAT[type] || "B8C0CC", borders: { top: none, left: none, right: none, bottom: { style: BorderStyle.SINGLE, size: 4, color: "FFFFFF" } } }),
-      cell(type, typeWidths[1], { bold: true, fill: ri % 2 ? ZEBRA : undefined }),
-      cell(what, typeWidths[2], { fill: ri % 2 ? ZEBRA : undefined }),
-      cell(ex ? `"${ex}"` : "", typeWidths[3], { fill: ri % 2 ? ZEBRA : undefined, color: GREY }),
-      cell(n, typeWidths[4], { fill: ri % 2 ? ZEBRA : undefined, align: AlignmentType.CENTER }),
-    ] })),
-  ],
-});
+const typesTable = table(["Type", "What it does", "Example from the dataset", "Texts"], [
+  ["Scarcity", "Claims stock is running out or demand is high", "\"Only 2 left in stock!\"", "418"],
+  ["Urgency", "Puts a real or fake deadline on the decision", "\"Deal ends in 04:59\"", "210"],
+  ["Social Proof", "Uses other shoppers' activity as pressure", "\"27 people bought this in the last hour\"", "312"],
+  ["Misdirection", "Guilt-trips or steers the choice", "\"No thanks, I don't like saving money\"", "195"],
+  ["Other", "Obstruction, sneaking and forced action (merged: too few examples)", "", "43"],
+  ["Not a dark pattern", "Ordinary shop text", "\"Write a review\"", "1,178"],
+], [1700, 3900, 3166, 1100], { leftCols: 3 });
 
 const nbRow = (label, split, key) => [label, split, pct(NB[key].accuracy), pct(NB[key].precision), pct(NB[key].recall), pct(NB[key].f1)];
 const o = FINAL.original_test;
@@ -152,7 +103,7 @@ const benchmarkTable = table(["Model", "Test split", "Accuracy", "Precision", "R
   nbRow("TF-IDF + Linear SVM", "Random", "TF-IDF + Linear SVM"),
   nbRow("DistilBERT, 2 classes (first model)", "Random", "DistilBERT (fine-tuned)"),
   ["DistilBERT, 6 classes (final)", "By website", pct(o.accuracy), pct(o.precision), pct(o.recall), pct(o.f1)],
-], [3330, 1440, 1274, 1274, 1274, 1274], { highlight: 3, numericFrom: 2 });
+], [3330, 1440, 1274, 1274, 1274, 1274], { highlight: 3, leftCols: 2 });
 
 const stage = (r, total) => [r.f1.toFixed(2), `${Math.round(r.recall * total)} of ${total}`, r.false_alarms_per_page.toFixed(1)];
 const shipped = `new extractor, shipped threshold ${RP.shipped_threshold}`;
@@ -168,31 +119,25 @@ const realTable = table(
   realRows, [2986, 1000, 1080, 1400, 1000, 1080, 1320], { highlight: 4 });
 
 const code = (text, last = false) => new Paragraph({
-  keepNext: !last, spacing: { after: last ? 120 : 0 }, indent: { left: 170 },
-  shading: { type: ShadingType.CLEAR, fill: PAPER, color: "auto" },
-  border: { left: { style: BorderStyle.SINGLE, size: 18, color: VIOLET, space: 8 } },
-  children: [new TextRun({ text, font: "Courier New", size: 16, color: NAVY })],
+  keepNext: !last, spacing: { after: last ? 120 : 0 }, indent: { left: 360 },
+  shading: { type: ShadingType.CLEAR, fill: CODE_BG, color: "auto" },
+  children: [new TextRun({ text, font: "Courier New", size: 17 })],
 });
 
 // ---------- document ----------
 const T = FINAL.category_on_dark_test;
 const children = [
-  titleBand,
+  ...title,
   abstract,
-  tiles([
-    [pct(o.f1), "F1 on websites the model never saw (benchmark test split)"],
-    ["42.8 → 0", "false alarms per page on held-out real product pages"],
-    ["92 → 2", "flags on a live Amazon.in phone page; both are real dark patterns"],
-  ]),
 
-  h1("1", "Introduction"),
+  h1("1", "Introduction and Problem Statement"),
   p("**Dark patterns** are interface designs that push people into decisions they did not intend to make. On shopping sites they are often just a line of text: a countdown (\"Deal ends in 04:59\"), a stock warning (\"Only 2 left!\"), a crowd claim (\"27 people bought this in the last hour\") or a guilt-trip opt-out (\"No thanks, I don't like saving money\"). A crawl of 11,000 shopping sites found 1,818 such instances (Mathur et al., 2019), and India's Central Consumer Protection Authority banned 13 dark patterns in its **Guidelines for the Prevention and Regulation of Dark Patterns, 2023**. Checking pages by hand does not scale."),
   p("**Goal:** build a tool that reads a product page and points out each manipulative line and its type, accurately enough to use on real Indian shopping sites, not only on a clean benchmark."),
 
   h1("2", "Data"),
   p("**Benchmark.** We used the e-commerce dark pattern dataset of Yada et al. (2022), built from the Mathur et al. crawl: 2,356 text snippets from real shopping sites, half dark patterns and half ordinary text (Table 1).", { keepNext: true }),
   typesTable,
-  caption("Table 1.", "Dark pattern types in the benchmark. The colours match the dashboard."),
+  caption("Table 1.", "Dark pattern types in the benchmark."),
   p("**Indian shopping text.** The benchmark comes from Western sites, so we added (a) 368 Indian-style training lines generated from templates (rupee prices, delivery offers, ratings, product specifications), plus 32 separately written held-out lines; and (b) **171 lines mined from 17 real product pages** on Amazon.in, Snapdeal and six Indian brand stores: every line the first model scored above 0.3 or that used dark-pattern keywords, labelled by hand (11 dark, 160 not)."),
   p("**Real-page evaluation.** We labelled every line of 16 more product pages: 5 dev pages for tuning and 5 test pages from Amazon.in and Snapdeal (9 dark lines), plus 6 pages from **brand stores never used in training or tuning** (3 dark lines). None of these pages were used for mining."),
 
@@ -200,7 +145,7 @@ const children = [
   p("**Baselines.** TF-IDF vectors (unigrams and bigrams) with Logistic Regression and a Linear SVM."),
   p("**Model.** DistilBERT (Sanh et al., 2019), a compressed BERT that keeps about 97% of its language understanding at 40% smaller size, reads each word in context: \"only\" is pressure in \"only 3 left\" but harmless in \"only available in cotton\". Our first model had 2 classes plus a separate TF-IDF type classifier. The final model has **one head with 6 classes**, not a dark pattern plus the five types, so it can say \"none of these\" and its two decisions cannot disagree. P(dark) is 1 minus P(not a dark pattern). Training: 3 epochs, AdamW, learning rate 2e-5, batch 16, 64 tokens."),
   p("**Honest splits.** A random split puts text from the same website in both training and test. The final benchmark split keeps each website on one side (GroupShuffleSplit on page id), so test scores measure unseen sites."),
-  p("**From a page to lines.** The server downloads the page and keeps the visible text of each block element (paragraph, list item, table cell) as one line, joining inline tags so sentences are not split into fragments. It skips hidden text, dropdown lists, template placeholders, customer reviews (written by shoppers, not the seller) and lines with fewer than two words. On the Amazon.in page from the tile above this cut 690 messy lines to 164 clean ones."),
+  p("**From a page to lines.** The server downloads the page and keeps the visible text of each block element (paragraph, list item, table cell) as one line, joining inline tags so sentences are not split into fragments. It skips hidden text, dropdown lists, template placeholders, customer reviews (written by shoppers, not the seller) and lines with fewer than two words. On the Amazon.in phone page mentioned in the abstract, this cut 690 messy lines to 164 clean ones."),
   p("**Decision threshold.** Only 1 to 2% of the lines on a real page are dark patterns, against 50% in training, so a 0.5 cut-off raises far too many false alarms. A line is flagged when P(dark) > 0.97, chosen on the dev pages."),
 
   h1("4", "Results"),
@@ -239,39 +184,28 @@ const children = [
     "Sanh, V., Debut, L., Chaumond, J., & Wolf, T. (2019). DistilBERT, a distilled version of BERT: smaller, faster, cheaper and lighter. arXiv:1910.01108.",
     "Central Consumer Protection Authority, Government of India (2023). Guidelines for the Prevention and Regulation of Dark Patterns, 2023.",
   ].map((t, i) => new Paragraph({ spacing: { after: 30 }, indent: { left: 340, hanging: 340 }, children: [
-    new TextRun({ text: `[${i + 1}]  `, bold: true, color: VIOLET, size: 16 }), new TextRun({ text: t, size: 16 })] })),
+    new TextRun({ text: `[${i + 1}] ${t}`, size: 17 })] })),
   new Paragraph({ spacing: { before: 60 }, children: [
-    new TextRun({ text: "Source code  ", bold: true, color: VIOLET, size: 16 }),
+    new TextRun({ text: "Source code: ", bold: true, size: 17 }),
     new ExternalHyperlink({ link: "https://github.com/ketanabhishek8/Dark-Pattern-Website-Detector",
-      children: [new TextRun({ text: "github.com/ketanabhishek8/Dark-Pattern-Website-Detector", style: "Hyperlink", size: 16 })] }),
+      children: [new TextRun({ text: "https://github.com/ketanabhishek8/Dark-Pattern-Website-Detector", style: "Hyperlink", size: 17 })] }),
   ] }),
 ];
-
-const footer = new Footer({ children: [new Paragraph({
-  style: "FooterText",
-  tabStops: [{ type: TabStopType.RIGHT, position: W }],
-  border: { top: { style: BorderStyle.SINGLE, size: 4, color: LINE, space: 4 } },
-  children: [
-    new TextRun({ text: "Dark Pattern Detector", size: 15, color: GREY, font: SERIF, italics: true }),
-    new TextRun({ children: ["\tPage ", PageNumber.CURRENT, " of ", PageNumber.TOTAL_PAGES] }),
-  ],
-})] });
 
 const doc = new Document({
   title: "Dark Pattern Detector", creator: "Abhishek Joshi, Shaurya Ghorpade",
   styles: {
-    default: { document: { run: { font: SANS, size: 19, color: "1F2733" }, paragraph: { spacing: { line: 264 } } } },
+    default: { document: { run: { font: FONT, size: 20 } } },
     paragraphStyles: [
+      { id: "Title", name: "Title", basedOn: "Normal", run: { size: 38, bold: true, color: NAVY, font: FONT }, paragraph: { spacing: { after: 40 } } },
       { id: "Heading1", name: "Heading 1", basedOn: "Normal", next: "Normal", quickFormat: true,
-        run: { font: SERIF, size: 24, bold: true, color: NAVY }, paragraph: { spacing: { before: 190, after: 80 }, outlineLevel: 0 } },
-      { id: "FooterText", name: "Footer Text", basedOn: "Normal", run: { size: 15, color: GREY } },
+        run: { size: 24, bold: true, color: NAVY, font: FONT }, paragraph: { spacing: { before: 160, after: 60 }, outlineLevel: 0 } },
     ],
   },
-  numbering: { config: [{ reference: "bullets", levels: [{ level: 0, format: LevelFormat.BULLET, text: "■", alignment: AlignmentType.LEFT,
-    style: { run: { color: VIOLET, size: 14 }, paragraph: { indent: { left: 400, hanging: 240 } } } }] }] },
+  numbering: { config: [{ reference: "bullets", levels: [{ level: 0, format: LevelFormat.BULLET, text: "\u2022", alignment: AlignmentType.LEFT,
+    style: { paragraph: { indent: { left: 460, hanging: 230 } } } }] }] },
   sections: [{
-    properties: { page: { size: { width: 11906, height: 16838 }, margin: { top: 900, bottom: 900, left: MARGIN, right: MARGIN, footer: 420 } } },
-    footers: { default: footer },
+    properties: { page: { size: { width: 11906, height: 16838 }, margin: { top: MARGIN, bottom: MARGIN, left: MARGIN, right: MARGIN } } },
     children,
   }],
 });
