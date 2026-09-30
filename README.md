@@ -1,6 +1,6 @@
 # Dark Pattern Detector
 
-Abhishek Joshi (16014124023) and Shaurya Ghorpade (16014124017), Artificial Intelligence course.
+Abhishek Joshi and Shaurya Ghorpade, Artificial Intelligence course.
 
 | File | What it is |
 |---|---|
