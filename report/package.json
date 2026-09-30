@@ -1,0 +1,6 @@
+{
+  "name": "dark-pattern-report",
+  "private": true,
+  "description": "Builds report.docx; see report/README.md",
+  "dependencies": { "docx": "^9.5.0" }
+}

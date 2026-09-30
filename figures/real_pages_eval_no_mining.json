@@ -1,0 +1,182 @@
+{
+  "model": "/private/tmp/claude-501/-Users-tsurai-vsc-files-AI-Project/3dc91c17-fb20-4ccf-b7e6-85003be8464c/scratchpad/model_nomined",
+  "pages": {
+    "dev": [
+      "amazon_iqoo",
+      "amazon_B0H1X19T3Y",
+      "amazon_B0B9H3PMFM",
+      "snapdeal_5555224671",
+      "snapdeal_0175786139"
+    ],
+    "test": [
+      "amazon_B0HCBYMC8D",
+      "amazon_B09XHYSV9C",
+      "amazon_B0HJ255RGS",
+      "snapdeal_3546748876",
+      "snapdeal_9324185659"
+    ],
+    "unseen": [
+      "bombayshavingcompany",
+      "themancompany",
+      "zouk",
+      "bellavitaorganic",
+      "bummer",
+      "plumgoodness"
+    ]
+  },
+  "lines_per_page": {
+    "v1": 359,
+    "v2": 130
+  },
+  "dev_threshold_sweep": [
+    {
+      "threshold": 0.5,
+      "flagged": 29,
+      "false_alarms": 21,
+      "false_alarms_per_page": 4.2,
+      "precision": 0.2759,
+      "recall": 1.0,
+      "f1": 0.4324
+    },
+    {
+      "threshold": 0.6,
+      "flagged": 29,
+      "false_alarms": 21,
+      "false_alarms_per_page": 4.2,
+      "precision": 0.2759,
+      "recall": 1.0,
+      "f1": 0.4324
+    },
+    {
+      "threshold": 0.7,
+      "flagged": 21,
+      "false_alarms": 13,
+      "false_alarms_per_page": 2.6,
+      "precision": 0.381,
+      "recall": 1.0,
+      "f1": 0.5517
+    },
+    {
+      "threshold": 0.8,
+      "flagged": 18,
+      "false_alarms": 11,
+      "false_alarms_per_page": 2.2,
+      "precision": 0.3889,
+      "recall": 0.875,
+      "f1": 0.5385
+    },
+    {
+      "threshold": 0.9,
+      "flagged": 10,
+      "false_alarms": 5,
+      "false_alarms_per_page": 1.0,
+      "precision": 0.5,
+      "recall": 0.625,
+      "f1": 0.5556
+    },
+    {
+      "threshold": 0.95,
+      "flagged": 7,
+      "false_alarms": 3,
+      "false_alarms_per_page": 0.6,
+      "precision": 0.5714,
+      "recall": 0.5,
+      "f1": 0.5333
+    },
+    {
+      "threshold": 0.97,
+      "flagged": 4,
+      "false_alarms": 0,
+      "false_alarms_per_page": 0.0,
+      "precision": 1.0,
+      "recall": 0.5,
+      "f1": 0.6667
+    },
+    {
+      "threshold": 0.98,
+      "flagged": 4,
+      "false_alarms": 0,
+      "false_alarms_per_page": 0.0,
+      "precision": 1.0,
+      "recall": 0.5,
+      "f1": 0.6667
+    },
+    {
+      "threshold": 0.99,
+      "flagged": 1,
+      "false_alarms": 0,
+      "false_alarms_per_page": 0.0,
+      "precision": 1.0,
+      "recall": 0.125,
+      "f1": 0.2222
+    },
+    {
+      "threshold": 0.995,
+      "flagged": 1,
+      "false_alarms": 0,
+      "false_alarms_per_page": 0.0,
+      "precision": 1.0,
+      "recall": 0.125,
+      "f1": 0.2222
+    }
+  ],
+  "chosen_threshold": 0.97,
+  "test": {
+    "old extractor, threshold 0.5": {
+      "threshold": 0.5,
+      "flagged": 161,
+      "false_alarms": 148,
+      "false_alarms_per_page": 29.6,
+      "precision": 0.0807,
+      "recall": 1.0,
+      "f1": 0.1494
+    },
+    "new extractor, threshold 0.5": {
+      "threshold": 0.5,
+      "flagged": 32,
+      "false_alarms": 23,
+      "false_alarms_per_page": 4.6,
+      "precision": 0.2812,
+      "recall": 1.0,
+      "f1": 0.439
+    },
+    "new extractor, threshold 0.97": {
+      "threshold": 0.97,
+      "flagged": 6,
+      "false_alarms": 0,
+      "false_alarms_per_page": 0.0,
+      "precision": 1.0,
+      "recall": 0.6667,
+      "f1": 0.8
+    }
+  },
+  "unseen": {
+    "old extractor, threshold 0.5": {
+      "threshold": 0.5,
+      "flagged": 41,
+      "false_alarms": 39,
+      "false_alarms_per_page": 6.5,
+      "precision": 0.0488,
+      "recall": 0.6667,
+      "f1": 0.0909
+    },
+    "new extractor, threshold 0.5": {
+      "threshold": 0.5,
+      "flagged": 29,
+      "false_alarms": 27,
+      "false_alarms_per_page": 4.5,
+      "precision": 0.069,
+      "recall": 0.6667,
+      "f1": 0.125
+    },
+    "new extractor, threshold 0.97": {
+      "threshold": 0.97,
+      "flagged": 2,
+      "false_alarms": 0,
+      "false_alarms_per_page": 0.0,
+      "precision": 1.0,
+      "recall": 0.6667,
+      "f1": 0.8
+    }
+  }
+}

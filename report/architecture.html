@@ -1,0 +1,35 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- Source for figures/architecture.png. Render: node report/render_figures.mjs -->
+<style>
+  body { margin: 0; background: #fff; font-family: Georgia, serif; color: #152033; }
+  .wrap { width: 1200px; padding: 16px 18px 12px; }
+  .row { display: flex; align-items: stretch; }
+  .box { flex: 1; border-radius: 14px; padding: 14px 14px 12px; background: #eef1f5; border: 2px solid #d8dde5; }
+  .box.model { background: #e6e3f7; border-color: #4a3aa7; flex: 1.25; }
+  .box.ui { background: #152033; border-color: #152033; color: #fff; }
+  .step { font: 700 13px/1 "Helvetica Neue", Arial, sans-serif; color: #4a3aa7; letter-spacing: .02em; }
+  .box.ui .step { color: #c9c3f2; }
+  .box h4 { margin: 6px 0 6px; font-size: 20px; }
+  .box p { margin: 0; font: 14px/1.4 "Helvetica Neue", Arial, sans-serif; opacity: .88; }
+  .tool { display: inline-block; margin-top: 10px; font: 700 12.5px/1 "Helvetica Neue", Arial, sans-serif; padding: 5px 9px; border-radius: 7px; background: #fff; color: #152033; }
+  .box.model .tool { background: #4a3aa7; color: #fff; }
+  .box.ui .tool { background: rgba(255,255,255,.16); color: #fff; }
+  .arrow { width: 30px; display: flex; align-items: center; justify-content: center; color: #4a3aa7; flex: none; }
+  .band { display: flex; margin-top: 10px; font: 13px/1.2 "Helvetica Neue", Arial, sans-serif; color: #5c6678; }
+  .band span { text-align: center; border-top: 2px solid #d8dde5; padding-top: 6px; margin: 0 6px; }
+</style></head>
+<body><div class="wrap">
+  <div class="row">
+    <div class="box"><div class="step">STEP 1</div><h4>Input</h4><p>A product page link, or text pasted from the page</p><span class="tool">Browser</span></div>
+    <div class="arrow"><svg width="22" height="22" viewBox="0 0 22 22"><path d="M3 11h14M12 5l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="box"><div class="step">STEP 2</div><h4>Fetch</h4><p>Download the page; refuse private addresses; 5 MB cap</p><span class="tool">requests</span></div>
+    <div class="arrow"><svg width="22" height="22" viewBox="0 0 22 22"><path d="M3 11h14M12 5l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="box"><div class="step">STEP 3</div><h4>Extract</h4><p>Visible lines in page order; skip hidden text and reviews</p><span class="tool">BeautifulSoup</span></div>
+    <div class="arrow"><svg width="22" height="22" viewBox="0 0 22 22"><path d="M3 11h14M12 5l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="box model"><div class="step">STEP 4</div><h4>Classify</h4><p>Not dark, or one of 5 types; flag a line when P(dark) &gt; 0.97</p><span class="tool">DistilBERT, 6 classes</span></div>
+    <div class="arrow"><svg width="22" height="22" viewBox="0 0 22 22"><path d="M3 11h14M12 5l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="box ui"><div class="step">STEP 5</div><h4>Dashboard</h4><p>Count, pressure level, chart, page map, findings</p><span class="tool">HTML / JS</span></div>
+  </div>
+  <div class="band"><span style="flex:1">Client</span><span style="flex:3.4">FastAPI server (Python)</span><span style="flex:1">Client</span></div>
+</div></body></html>
