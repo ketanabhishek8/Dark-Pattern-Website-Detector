@@ -1,9 +1,11 @@
 """Dark Pattern Detector dashboard. Run: python app/server.py, then open http://localhost:8000"""
+import os
 import time
 from pathlib import Path
+from urllib.parse import urlparse
 
 import uvicorn
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
@@ -30,11 +32,16 @@ def sample_shop():
 
 
 @app.post("/api/scan")
-def scan(req: ScanRequest):
+def scan(req: ScanRequest, request: Request):
     start = time.perf_counter()
     try:
         if req.url and req.url.strip():
-            url, host, html = fetch_page(req.url.strip())
+            target = urlparse(req.url.strip())
+            if target.path == "/sample-shop" and target.hostname == request.url.hostname:
+                # Our own sample page: read it from disk instead of fetching it over the network
+                url, host, html = req.url.strip(), target.hostname, (STATIC / "sample-shop.html").read_text()
+            else:
+                url, host, html = fetch_page(req.url.strip())
             title, snippets = extract_snippets(html)
             source = {"kind": "url", "url": url, "host": host, "title": title or host}
         elif req.text and req.text.strip():
@@ -55,4 +62,4 @@ def scan(req: ScanRequest):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host=os.environ.get("HOST", "127.0.0.1"), port=int(os.environ.get("PORT", 8000)))

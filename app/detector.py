@@ -1,8 +1,11 @@
 """Loads the trained models, extracts text snippets from a web page, and classifies each snippet."""
+import ipaddress
+import os
 import re
+import socket
 import time
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import urljoin, urlparse
 
 import joblib
 import requests
@@ -13,6 +16,10 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 MODEL_DIR = Path(__file__).parent / "model"
 THRESHOLD = 0.5
 MAX_SNIPPETS = 800
+MAX_PAGE_BYTES = 5_000_000
+MAX_REDIRECTS = 5
+# Set on the public deployment so the server can't be used to reach private or internal addresses
+BLOCK_PRIVATE_URLS = os.environ.get("BLOCK_PRIVATE_URLS") == "1"
 BLOCK_TAGS = {"div", "p", "li", "ul", "ol", "section", "article", "header", "footer", "nav", "aside", "main",
               "h1", "h2", "h3", "h4", "h5", "h6", "table", "tr", "td", "th", "form", "button", "label", "dd", "dt"}
 SKIP_TAGS = ["script", "style", "noscript", "svg", "template", "iframe", "head"]
@@ -100,6 +107,17 @@ def extract_snippets(html):
     return title, snippets
 
 
+def _check_public(host):
+    try:
+        infos = socket.getaddrinfo(host, None)
+    except socket.gaierror:
+        raise ScanError(f"Couldn't find {host}. Check the link and scan again.")
+    for info in infos:
+        ip = ipaddress.ip_address(info[4][0])
+        if not ip.is_global:
+            raise ScanError(f"{host} points to a private network address, which this server won't scan.")
+
+
 def fetch_page(url):
     if not re.match(r"^https?://", url):
         url = "https://" + url
@@ -107,7 +125,20 @@ def fetch_page(url):
     if not host:
         raise ScanError("That doesn't look like a web address. Paste a full link, like https://example.com/product.")
     try:
-        resp = requests.get(url, headers=HEADERS, timeout=15)
+        for _ in range(MAX_REDIRECTS + 1):
+            if BLOCK_PRIVATE_URLS:
+                _check_public(host)
+            resp = requests.get(url, headers=HEADERS, timeout=15, allow_redirects=False, stream=True)
+            if resp.is_redirect and resp.headers.get("location"):
+                url = urljoin(url, resp.headers["location"])
+                host = urlparse(url).hostname or host
+                resp.close()
+                continue
+            break
+        else:
+            raise ScanError(f"{host} redirected too many times. Open the page yourself and use Paste text instead.")
+        body = resp.raw.read(MAX_PAGE_BYTES, decode_content=True)
+        resp.close()
     except requests.RequestException:
         raise ScanError(f"Couldn't reach {host}. Check the link and your internet connection, then scan again.")
     if resp.status_code in (401, 403, 429, 503):
@@ -115,4 +146,6 @@ def fetch_page(url):
                         "Open the page yourself, copy its text, and use Paste text instead.")
     if resp.status_code >= 400:
         raise ScanError(f"{host} returned HTTP {resp.status_code}. Check the link and scan again.")
-    return url, host, resp.text
+    # requests assumes Latin-1 when the server sends no charset, which garbles UTF-8 pages (e.g. the ₹ sign)
+    encoding = resp.encoding if "charset" in resp.headers.get("content-type", "").lower() else "utf-8"
+    return url, host, body.decode(encoding or "utf-8", errors="replace")

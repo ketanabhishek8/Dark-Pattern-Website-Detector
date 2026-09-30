@@ -24,3 +24,14 @@ The trained model (`app/model/`, about 256 MB) is too big for GitHub, so it isn'
 Open http://localhost:8000/?demo to scan the built-in sample shop straight away. That is the safest option for a live demo, because some real sites block automated requests. For those sites, use **Paste text** instead.
 
 To re-check the numbers in Table 2 of the report: `python app/evaluate.py`
+
+## Deploy to Hugging Face Spaces
+
+The app runs as a Docker Space (see `Dockerfile`). When hosted, it refuses links to private network addresses.
+
+```bash
+source .venv/bin/activate
+pip install huggingface_hub
+hf auth login                   # paste a token with write access from huggingface.co/settings/tokens
+python deploy/deploy_space.py   # creates or updates the Space and uploads the app with the model
+```
