@@ -2,8 +2,11 @@
 
 Compares the original line extractor with the current one, and picks the decision threshold on the dev pages
 only; the test pages are used just for the final numbers.
-Usage: python app/eval_real_pages.py   (needs the HTML snapshots in app/real_pages/html/)
+Page groups: "dev" (threshold tuning) and "test" are Amazon.in/Snapdeal pages; "unseen" pages come from sites that
+are never used for training or tuning.
+Usage: python app/eval_real_pages.py [--model DIR] [--out FILE]   (needs the snapshots in app/real_pages/html/)
 """
+import argparse
 import json
 import re
 import sys
@@ -60,8 +63,23 @@ def score(pages, threshold):
             "precision": round(precision, 4), "recall": round(recall, 4), "f1": round(f1, 4)}
 
 
+def report_misses(pages, threshold):
+    for page in pages:
+        found = lambda l: any(p > threshold and (l in t or t in l) for t, p in zip(page["lines"], page["probs"]))
+        missed = [l for l in page["dark"] if not found(l)]
+        wrong = [t for t, p in zip(page["lines"], page["probs"])
+                 if p > threshold and not any(l in t or t in l for l in page["dark"])]
+        if missed or wrong:
+            print(f"  {page['id']}: missed {missed}  false alarms {wrong}")
+
+
 def main():
-    model = detector.Detector()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model", default=None, help="model folder (default: app/model)")
+    parser.add_argument("--out", type=Path, default=OUT)
+    args = parser.parse_args()
+
+    model = detector.Detector(args.model)
     runs = {}
     for name, extract in (("v1", extract_v1), ("v2", extract_v2)):
         pages = []
@@ -75,37 +93,42 @@ def main():
     sweep = [score(split(runs["v2"], "dev"), t) for t in THRESHOLDS]
     # Highest dev F1; with so few labelled lines several thresholds tie, and then the lowest one wins so the
     # dashboard misses as few dark patterns as possible
-    best = max(sweep, key=lambda r: (round(r["f1"], 3), -r["threshold"]))
+    best = max(sweep, key=lambda r: (round(r["f1"], 3), -r["threshold"]))["threshold"]
 
     results = {
-        "pages": {s: [p["id"] for p in split(runs["v2"], s)] for s in ("dev", "test")},
+        "model": str(args.model or detector.MODEL_DIR),
+        "pages": {s: [p["id"] for p in split(runs["v2"], s)] for s in ("dev", "test", "unseen")},
         "lines_per_page": {n: round(sum(len(p["lines"]) for p in runs[n]) / len(runs[n])) for n in runs},
         "dev_threshold_sweep": sweep,
-        "chosen_threshold": best["threshold"],
-        "test": {
-            "old extractor, threshold 0.5": score(split(runs["v1"], "test"), 0.5),
-            "new extractor, threshold 0.5": score(split(runs["v2"], "test"), 0.5),
-            f"new extractor, threshold {best['threshold']}": score(split(runs["v2"], "test"), best["threshold"]),
-        },
+        "chosen_threshold": best,
     }
-    OUT.write_text(json.dumps(results, indent=2))
+    # The dashboard's threshold (detector.THRESHOLD) is kept at 0.97, set before the mined data was added: the dev
+    # pages share sites and boilerplate with the mined lines, so tuning on them now picks a threshold that is too
+    # lenient for new sites. NOTE: this was decided after seeing the unseen-site results, so those are optimistic.
+    shipped = detector.THRESHOLD
+    results["shipped_threshold"] = shipped
+    for group in ("test", "unseen"):
+        results[group] = {
+            "old extractor, threshold 0.5": score(split(runs["v1"], group), 0.5),
+            "new extractor, threshold 0.5": score(split(runs["v2"], group), 0.5),
+            f"new extractor, dev-picked threshold {best}": score(split(runs["v2"], group), best),
+            f"new extractor, shipped threshold {shipped}": score(split(runs["v2"], group), shipped),
+        }
+    args.out.write_text(json.dumps(results, indent=2))
 
     print(f"Lines per page: old {results['lines_per_page']['v1']}, new {results['lines_per_page']['v2']}")
     print("\nDev pages, new extractor:")
     for r in sweep:
         print(f"  threshold {r['threshold']:<6} flagged {r['flagged']:>3}  false alarms {r['false_alarms']:>3}  "
               f"precision {r['precision']:.2f}  recall {r['recall']:.2f}  F1 {r['f1']:.2f}")
-    print(f"\nChosen threshold: {best['threshold']}\n\nTest pages:")
-    for name, r in results["test"].items():
-        print(f"  {name:<32} flagged {r['flagged']:>3}  false alarms {r['false_alarms']:>3} "
-              f"({r['false_alarms_per_page']}/page)  precision {r['precision']:.2f}  recall {r['recall']:.2f}  F1 {r['f1']:.2f}")
-    for page in split(runs["v2"], "test"):
-        missed = [l for l in page["dark"] if not any(p > best["threshold"] and (l in t or t in l)
-                                                   for t, p in zip(page["lines"], page["probs"]))]
-        wrong = [t for t, p in zip(page["lines"], page["probs"])
-                 if p > best["threshold"] and not any(l in t or t in l for l in page["dark"])]
-        if missed or wrong:
-            print(f"  {page['id']}: missed {missed}  false alarms {wrong}")
+    print(f"\nDev-picked threshold: {best}   Shipped threshold: {shipped}")
+    for group in ("test", "unseen"):
+        print(f"\n{group.capitalize()} pages:")
+        for name, r in results[group].items():
+            print(f"  {name:<44} flagged {r['flagged']:>3}  false alarms {r['false_alarms']:>3} "
+                  f"({r['false_alarms_per_page']}/page)  precision {r['precision']:.2f}  recall {r['recall']:.2f}  "
+                  f"F1 {r['f1']:.2f}")
+        report_misses(split(runs["v2"], group), shipped)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,24 @@
+{
+  "split": "group",
+  "test_size": 473,
+  "original_test": {
+    "accuracy": 0.9661733615221987,
+    "precision": 0.9699570815450643,
+    "recall": 0.9617021276595744,
+    "f1": 0.9658119658119658,
+    "false_positives": 7,
+    "false_negatives": 9
+  },
+  "category_on_dark_test": {
+    "accuracy": 0.9617021276595744,
+    "macro_f1": 0.9353137034116976
+  },
+  "india_holdout": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "false_positives": 0,
+    "false_negatives": 0
+  }
+}

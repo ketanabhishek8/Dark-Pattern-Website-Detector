@@ -1,5 +1,5 @@
 {
-  "labelling_guide": "A line is a dark pattern if it pressures the shopper: a countdown or deadline (Urgency), a low-stock or high-demand claim (Scarcity), or a count of other shoppers' purchases, views or carts (Social Proof), or guilt-tripping / pre-selected choices (Misdirection). Plain prices and discounts, delivery dates, badges (Amazon's Choice, #1 Best Seller), rating summaries, policies and product details are not. Every line on every page was read; lines not listed under 'dark' are labelled not dark. Snapshots taken 30 September 2026; the HTML is kept locally in real_pages/html/ (not in git).",
+  "labelling_guide": "A line is a dark pattern if it pressures the shopper: a countdown or deadline (Urgency), a low-stock or high-demand claim (Scarcity), or a count of other shoppers' purchases, views or carts (Social Proof), or guilt-tripping / pre-selected choices (Misdirection). Plain prices and discounts, delivery dates, badges (Amazon's Choice, #1 Best Seller), rating summaries, policies and product details are not. Every line on every page was read; lines not listed under 'dark' are labelled not dark. Snapshots taken 30 September 2026; the HTML is kept locally in real_pages/html/ (not in git). The 'unseen' pages come from six Shopify stores that are not used anywhere in training or threshold tuning.",
   "pages": {
     "amazon_iqoo": {
       "url": "https://www.amazon.in/iQOO-Dimensity-Processor-OriginOS-Security/dp/B0HG929FR4/",
@@ -72,6 +72,42 @@
     "snapdeal_9324185659": {
       "url": "https://www.snapdeal.com/product/lenia-light-blue-blended-mens/5764608179324185659",
       "split": "test",
+      "dark": {}
+    },
+    "bombayshavingcompany": {
+      "url": "https://www.bombayshavingcompany.com/products/baller-pubic-hair-trimmer",
+      "split": "unseen",
+      "dark": {
+        "1,450 Orders In Last 7 Days": "Social Proof"
+      }
+    },
+    "themancompany": {
+      "url": "https://www.themancompany.com/products/eau-de-parfum-pravy-30ml-1",
+      "split": "unseen",
+      "dark": {
+        "Limited Time Offer": "Urgency"
+      }
+    },
+    "zouk": {
+      "url": "https://www.zouk.co.in/products/sandrift-expandable-office-bag-olive",
+      "split": "unseen",
+      "dark": {
+        "Amalia Daypack - Fast Moving": "Scarcity"
+      }
+    },
+    "bellavitaorganic": {
+      "url": "https://www.bellavitaorganic.com/products/magicpin-duo",
+      "split": "unseen",
+      "dark": {}
+    },
+    "bummer": {
+      "url": "https://www.bummer.in/products/24-7-womens-shorts-toffee",
+      "split": "unseen",
+      "dark": {}
+    },
+    "plumgoodness": {
+      "url": "https://www.plumgoodness.com/products/plum-rice-water-2-niacinamide-hybrid-sunscreen-7-gm-travel-size-1-sca_clone_freegift",
+      "split": "unseen",
       "dark": {}
     }
   }

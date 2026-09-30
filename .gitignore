@@ -10,3 +10,4 @@ venv/
 
 # Real-page snapshots (copyrighted pages, kept locally)
 app/real_pages/html/
+app/real_pages/mining_html/

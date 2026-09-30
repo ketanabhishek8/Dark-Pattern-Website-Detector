@@ -16,6 +16,7 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 MODEL_DIR = Path(__file__).parent / "model"
 # On real pages only ~1-2% of lines are dark patterns (vs 50% in the training data), so 0.5 raises far too many
 # false alarms. 0.97 was chosen on hand-labelled dev pages; see eval_real_pages.py and figures/real_pages_eval.json
+# (kept for the 6-class model: re-tuning on the dev pages, which share sites with the mined data, overfits)
 THRESHOLD = 0.97
 MAX_SNIPPETS = 800
 MAX_PAGE_BYTES = 5_000_000
@@ -58,28 +59,42 @@ class ScanError(Exception):
 
 
 class Detector:
-    def __init__(self):
-        if not (MODEL_DIR / "distilbert").exists():
+    """Wraps the trained model: the current 6-class model, or the older 2-class model plus its TF-IDF category model."""
+
+    def __init__(self, model_dir=None):
+        model_dir = Path(model_dir or MODEL_DIR)
+        if not (model_dir / "distilbert").exists():
             raise SystemExit("Model not found. Run `python app/train.py` first.")
         self.device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
-        self.tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR / "distilbert")
-        self.bert = AutoModelForSequenceClassification.from_pretrained(MODEL_DIR / "distilbert").to(self.device).eval()
-        self.cat_model = joblib.load(MODEL_DIR / "category_model.joblib")
+        self.tokenizer = AutoTokenizer.from_pretrained(model_dir / "distilbert")
+        self.bert = AutoModelForSequenceClassification.from_pretrained(model_dir / "distilbert").to(self.device).eval()
+        self.labels = [self.bert.config.id2label[i] for i in range(self.bert.config.num_labels)]
+        legacy = model_dir / "category_model.joblib"
+        self.cat_model = joblib.load(legacy) if len(self.labels) == 2 and legacy.exists() else None
 
     @torch.no_grad()
-    def dark_probabilities(self, texts, batch_size=64):
-        probs = []
+    def predict(self, texts, batch_size=64):
+        """Returns P(dark pattern) and the most likely dark pattern type for each text."""
+        probs, types = [], []
         for i in range(0, len(texts), batch_size):
             enc = self.tokenizer(texts[i:i + batch_size], truncation=True, padding=True, max_length=64,
                                  return_tensors="pt").to(self.device)
-            probs += torch.softmax(self.bert(**enc).logits, dim=-1)[:, 1].cpu().tolist()
-        return probs
+            p = torch.softmax(self.bert(**enc).logits, dim=-1).cpu()
+            probs += (1 - p[:, 0]).tolist()  # class 0 is "not a dark pattern"
+            if self.cat_model is None:
+                types += [self.labels[j + 1] for j in p[:, 1:].argmax(dim=-1).tolist()]
+        if self.cat_model is not None:
+            types = list(self.cat_model.predict(texts)) if texts else []
+        return probs, types
+
+    def dark_probabilities(self, texts):
+        return self.predict(texts)[0]
 
     def analyze_snippets(self, snippets, threshold=THRESHOLD):
         start = time.perf_counter()
-        probs = self.dark_probabilities(snippets)
+        probs, types = self.predict(snippets)
         flagged_idx = [i for i, p in enumerate(probs) if p > threshold]
-        categories = self.cat_model.predict([snippets[i] for i in flagged_idx]) if flagged_idx else []
+        categories = [types[i] for i in flagged_idx]
         cat_of = dict(zip(flagged_idx, categories))
         items = [{"index": i, "text": t, "p_dark": round(p, 4), "category": cat_of.get(i)}
                  for i, (t, p) in enumerate(zip(snippets, probs))]

@@ -1,64 +1,63 @@
-"""Trains the dark pattern models (same setup as the notebook, plus Indian-style training lines) and saves them
-to app/model/ for the dashboard."""
+"""Trains the dark pattern model and saves it to app/model/ for the dashboard.
+
+One DistilBERT model with 6 classes: "Not Dark Pattern" plus the five dark pattern types. It is trained on the
+dataset's training split (split by website), Indian-style template lines, and lines mined from real product pages.
+
+Usage: python app/train.py [--split group|random] [--no-mined] [--out DIR]
+"""
+import argparse
 import random
+import shutil
 from pathlib import Path
 
-import joblib
 import numpy as np
 import pandas as pd
 import torch
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split
-from sklearn.pipeline import make_pipeline
 from torch.utils.data import DataLoader, TensorDataset
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, get_linear_schedule_with_warmup
 
-from india_data import TRAIN as INDIA_TRAIN
+from data import LABELS, SEED, extra_training_data, load_dataset, split_dataset
 
-URL = "https://raw.githubusercontent.com/yamanalab/ec-darkpattern/master/dataset/dataset.tsv"
-OUT = Path(__file__).parent / "model"
-SEED, EPOCHS, BATCH, LR, MAX_LEN = 42, 3, 16, 2e-5, 64
+EPOCHS, BATCH, LR, MAX_LEN = 3, 16, 2e-5, 64
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--split", choices=["group", "random"], default="group")
+parser.add_argument("--no-mined", action="store_true", help="leave out the lines mined from real pages")
+parser.add_argument("--out", type=Path, default=Path(__file__).parent / "model")
+args = parser.parse_args()
 
 random.seed(SEED); np.random.seed(SEED); torch.manual_seed(SEED)
 device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
 print("Using device:", device)
 
-df = pd.read_csv(URL, sep="\t").dropna(subset=["text"])
-df["category"] = df["Pattern Category"].replace({"Obstruction": "Other", "Sneaking": "Other", "Forced Action": "Other"})
-train_df, _ = train_test_split(df, test_size=0.2, random_state=SEED, stratify=df["category"])
+train_df, _ = split_dataset(load_dataset(), args.split)
+extra = extra_training_data(mined=not args.no_mined)
+train_df = pd.concat([train_df[["text", "label", "category"]], extra], ignore_index=True)
+label_id = {name: i for i, name in enumerate(LABELS)}
+y = torch.tensor(train_df["category"].map(label_id).values)
+print(f"Training on {len(train_df)} texts ({len(extra)} Indian-style/mined), split: {args.split}")
+print(train_df["category"].value_counts().to_string())
 
-# Domain adaptation: add Indian-style lines to the training set only (the test split above is untouched)
-india = pd.DataFrame(INDIA_TRAIN, columns=["text", "label", "category"])
-train_df = pd.concat([train_df, india], ignore_index=True)
-print(f"Training on {len(train_df)} texts ({len(india)} Indian-style)")
-
-# Category classifier (TF-IDF + Logistic Regression) on dark pattern texts only
-dark = train_df[train_df.label == 1]
-cat_model = make_pipeline(TfidfVectorizer(ngram_range=(1, 2), sublinear_tf=True),
-                          LogisticRegression(max_iter=1000, C=10, class_weight="balanced"))
-cat_model.fit(dark["text"], dark["category"])
-
-# DistilBERT dark / not-dark classifier
 tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
 enc = tokenizer(list(train_df["text"]), truncation=True, padding="max_length", max_length=MAX_LEN, return_tensors="pt")
-loader = DataLoader(TensorDataset(enc["input_ids"], enc["attention_mask"], torch.tensor(train_df["label"].values)),
-                    batch_size=BATCH, shuffle=True)
-bert = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased", num_labels=2).to(device)
+loader = DataLoader(TensorDataset(enc["input_ids"], enc["attention_mask"], y), batch_size=BATCH, shuffle=True)
+bert = AutoModelForSequenceClassification.from_pretrained(
+    "distilbert-base-uncased", num_labels=len(LABELS),
+    id2label=dict(enumerate(LABELS)), label2id=label_id).to(device)
 optimizer = torch.optim.AdamW(bert.parameters(), lr=LR)
 scheduler = get_linear_schedule_with_warmup(optimizer, 0, EPOCHS * len(loader))
 bert.train()
 for epoch in range(EPOCHS):
     total = 0
-    for ids, mask, y in loader:
+    for ids, mask, labels in loader:
         optimizer.zero_grad()
-        loss = bert(input_ids=ids.to(device), attention_mask=mask.to(device), labels=y.to(device)).loss
+        loss = bert(input_ids=ids.to(device), attention_mask=mask.to(device), labels=labels.to(device)).loss
         loss.backward(); optimizer.step(); scheduler.step()
         total += loss.item()
     print(f"Epoch {epoch + 1}/{EPOCHS}  loss={total / len(loader):.4f}")
 
-OUT.mkdir(exist_ok=True)
-bert.save_pretrained(OUT / "distilbert")
-tokenizer.save_pretrained(OUT / "distilbert")
-joblib.dump(cat_model, OUT / "category_model.joblib")
-print("Saved models to", OUT)
+if args.out.exists():
+    shutil.rmtree(args.out)  # drop files from older model versions (e.g. the separate category model)
+bert.save_pretrained(args.out / "distilbert")
+tokenizer.save_pretrained(args.out / "distilbert")
+print("Saved model to", args.out)

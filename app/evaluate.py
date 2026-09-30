@@ -1,36 +1,51 @@
-"""Evaluates a saved model on the original test set and the held-out Indian-style set."""
+"""Evaluates a saved model on the dataset's test split and on the held-out Indian-style lines.
+
+Usage: python app/evaluate.py [MODEL_DIR] [--split group|random] [--save FILE]
+"""
+import argparse
 import json
 import sys
 from pathlib import Path
 
-import pandas as pd
-from sklearn.metrics import accuracy_score, precision_recall_fscore_support
-from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, f1_score, precision_recall_fscore_support
 
 sys.path.insert(0, str(Path(__file__).parent))
 import detector
+from data import load_dataset, split_dataset
 from india_data import HOLDOUT
 
 # The dataset is half dark patterns, so 0.5 is the right cut-off here (the dashboard uses detector.THRESHOLD)
 DATASET_THRESHOLD = 0.5
 
-model_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else detector.MODEL_DIR
-detector.MODEL_DIR = model_dir
-d = detector.Detector()
+parser = argparse.ArgumentParser()
+parser.add_argument("model_dir", nargs="?", default=detector.MODEL_DIR)
+parser.add_argument("--split", choices=["group", "random"], default="group")
+parser.add_argument("--save", type=Path)
+args = parser.parse_args()
 
-df = pd.read_csv("https://raw.githubusercontent.com/yamanalab/ec-darkpattern/master/dataset/dataset.tsv", sep="\t").dropna(subset=["text"])
-df["category"] = df["Pattern Category"].replace({"Obstruction": "Other", "Sneaking": "Other", "Forced Action": "Other"})
-_, test_df = train_test_split(df, test_size=0.2, random_state=42, stratify=df["category"])
+d = detector.Detector(args.model_dir)
+_, test_df = split_dataset(load_dataset(), args.split)
 
 
-def scores(texts, labels):
-    pred = [int(p > DATASET_THRESHOLD) for p in d.dark_probabilities(list(texts))]
+def binary_scores(texts, labels):
+    probs, _ = d.predict(list(texts))
+    pred = [int(p > DATASET_THRESHOLD) for p in probs]
     p, r, f, _ = precision_recall_fscore_support(labels, pred, average="binary", zero_division=0)
     return {"accuracy": accuracy_score(labels, pred), "precision": p, "recall": r, "f1": f,
-            "false_positives": int(sum(1 for y, q in zip(labels, pred) if y == 0 and q == 1)),
-            "false_negatives": int(sum(1 for y, q in zip(labels, pred) if y == 1 and q == 0))}
+            "false_positives": sum(1 for y, q in zip(labels, pred) if y == 0 and q == 1),
+            "false_negatives": sum(1 for y, q in zip(labels, pred) if y == 1 and q == 0)}
 
 
-out = {"original_test": scores(test_df["text"], test_df["label"]),
-       "india_holdout": scores([t for t, _, _ in HOLDOUT], [y for _, y, _ in HOLDOUT])}
+dark = test_df[test_df.label == 1]
+_, types = d.predict(list(dark["text"]))
+out = {
+    "split": args.split,
+    "test_size": len(test_df),
+    "original_test": binary_scores(test_df["text"], test_df["label"]),
+    "category_on_dark_test": {"accuracy": accuracy_score(dark["category"], types),
+                              "macro_f1": f1_score(dark["category"], types, average="macro")},
+    "india_holdout": binary_scores([t for t, _, _ in HOLDOUT], [y for _, y, _ in HOLDOUT]),
+}
 print(json.dumps(out, indent=2))
+if args.save:
+    args.save.write_text(json.dumps(out, indent=2))

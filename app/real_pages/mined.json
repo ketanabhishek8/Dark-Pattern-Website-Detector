@@ -1,0 +1,860 @@
+{
+ "note": "Hard negatives (and missed positives) mined from 17 product pages on Amazon.in, Snapdeal and six Shopify stores (boAt, Mamaearth, Snitch, Beardo, mCaffeine, SUGAR). Candidates were every line the first model scored above 0.3 plus lines with dark-pattern keywords; each was labelled by hand with the guide in labels.json. None of these pages or sites are in the dev/test/unseen evaluation sets.",
+ "lines": [
+  {
+   "text": "Only 1 left in stock.",
+   "label": 1,
+   "category": "Scarcity"
+  },
+  {
+   "text": "50+ bought in past month",
+   "label": 1,
+   "category": "Social Proof"
+  },
+  {
+   "text": "45W FAST CHARGING WITH CHARGER IN-BOX – Power up quickly and get back to what matters, with the charger included right in the box, no extra purchase needed",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "0 item in your cart, Offer ends in",
+   "label": 1,
+   "category": "Urgency"
+  },
+  {
+   "text": "☀️ Buy 2 Get 2 Free Sale Is Live",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Limited time deal",
+   "label": 1,
+   "category": "Urgency"
+  },
+  {
+   "text": "Buy 2 Get 2 FREE on Selected Products | Use Code: B2G2 | Shop Now",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Buy 2 & Get 2 FREE + FREE Full Size Product Add Atleast 4 Products To Avail The Offer",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Charging Time 30 mins (Earbuds); 1 Hr 15 mins (Case)",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "12 Hrs Stay",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "7000mAh Battery + 60W Fast Charge for All-Day Use​ Say goodbye to battery anxiety! The 7000mAh large battery lasts from morning commutes to late-night binge-watching. Need a top-up? 60W fast charging gets the phone juiced up quickly during lunch breaks—no long waits to get back to using your device.",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "We've planted 8,00,000+ trees and still counting with every purchase",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Buy 2 or more",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Buy 10 or more",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Buy 5 or more",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Currently in 62 carts",
+   "label": 1,
+   "category": "Social Proof"
+  },
+  {
+   "text": "Buy Any 2 Products & Get Upto 35% OFF | Use Code: REDEEM35 | Shop Now",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Enjoy Unlimited FREE Same day/1-day delivery, Prime offers everyday and more",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Flat ₹700 OFF Awaits!",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Or fastest delivery Tomorrow 6 am - 8 am. Order within 8 hrs 50 mins. Details",
+   "label": 1,
+   "category": "Urgency"
+  },
+  {
+   "text": "Or fastest delivery Tomorrow 6 am - 8 am. Order within 8 hrs 49 mins. Details",
+   "label": 1,
+   "category": "Urgency"
+  },
+  {
+   "text": "2 One-Tap Transfer*",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "60H Total Playback | 12H on Buds: Enjoy up to 60 hours of total playback with the earbuds and charging case, with up to 12 hours of playback on a single charge for uninterrupted listening.",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Or fastest delivery Tomorrow, 1 October. Order within 3 hrs 4 mins. Details",
+   "label": 1,
+   "category": "Urgency"
+  },
+  {
+   "text": "In Same Price",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "ASAP™ Charge Yes; 10 mins charge = 3 Hrs playtime",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Currently in 288 carts",
+   "label": 1,
+   "category": "Social Proof"
+  },
+  {
+   "text": "Charging Time Up to 1 hour and 50 Minutes",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Would you like to tell us about a lower price?",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Grand Festive Sale Live Now | Get additional 5% off on Prepaid Orders | Code: FESTIVE | Shop Now",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Buy 2 & Get 2 FREE + FREE Full Size Product",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "You are pre-ordering this item as it is currently out of stock due to high demand. The product will be delivered in 10-15 days.",
+   "label": 1,
+   "category": "Scarcity"
+  },
+  {
+   "text": "1 reward point = ₹1",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "249 Store is LIVE. Shop now!",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Rewards 0 Points",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Free gifts are waiting in the cart",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Long Lasting Up to 12 Hrs",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Get 5% OFF on purchase of 2 or more items",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Add to cart Buy Now",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Get 6% Off Code: BOAT6 Copied!",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "1 Year Extended Warranty by OneAssist for ₹1,099.00",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Add ₹499 more to unlock a freebie",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "boAt Airdopes Prime 300 offers up to 60 hours of total playback, including the charging case, and up to 12 hours on the earbuds.",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Get 7% Off Code: BOAT7 Copied!",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Place Order Get 5% Discount on Prepaid orders",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "1 Year Extended warranty by Acko for ₹2,362.00",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "1 Year Extended Warranty by OneAssist for ₹849.00",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Use existing balance to claim additional discounts with a maximum of 10% off, over and above any applicable coupons and offers",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Get 10% Off Code: BOAT10 Copied!",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "100K+ recent orders from this brand",
+   "label": 1,
+   "category": "Social Proof"
+  },
+  {
+   "text": "007 is designed to stay with you. With up to 18% Perfume Oil Concentration its rich blend of powerful notes evolve gracefully throughout the day for up to 12 Hrs.",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Number of Pillow Covers:with 1 Pillow Cover",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Buy now & earn 899 reward points that can be used towards your next purchase!",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Most Savings",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Get Extra 5% Off On Prepaid Orders | Code: BOATHEAD | Shop Now!",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "In stock",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Add ₹399 more to get FREE delivery",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Number of Pillow Covers:with 2 Pillow Covers",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Refer a friend! Give 1000, Get 1000",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Buy now & earn 499 reward points that can be used towards your next purchase!",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Customers who viewed this item also viewed",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "More Offers",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Most popular",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "See 0 options with no featured offers",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Beardo will never - (1) call asking for payments from its consumers via WhatsApp, UPI or an unverified QR code; or (2) call asking for a second payment of order you have already placed.",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Q. How many microphones does Airdopes Prime 300 have?",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Working Time Up to 7 days*",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Final Price",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "7900mAh MASSIVE BATTERY – Segment-leading battery capacity for extended usage, so you can go longer between charges without compromising on performance",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "About this item",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "We have moved to SNITCH.COM UPGRADE NOW",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Get Flat 15% OFF: App Exclusive! Use Code: APP15. Install Now!",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Q. What is the playback time of boAt Airdopes Prime 300?",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Reward points earned will remain valid for 6 months from date of delivery",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "vivo Y31t 5G (Crimson Red, 4GB RAM, 128GB Storage) with No Cost EMI/Additional Exchange Offers",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Total price:",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "7 days return and refund Submit return or replacement requests within 7 days for wrong/expired products or 2 days for damaged/missing items via call or chat.",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Earn 5% of your order value as boAt reward points",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "EMI starts at ₹3,023. No Cost EMI available EMI options",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "₹23,999.00 with 40 percent savings",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "2 2600nits (HBM)",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "₹29,999.00 with 12 percent savings",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "2 Year Extended Warranty Plan by Xtracover for ₹6,124.00",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Why should you buy it?",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "EMI starts at ₹1,055. No Cost EMI available EMI options",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "₹85,999.00 with 8 percent savings",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Refer And Earn Refer a friend and you both get ₹100",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Total Amount ₹0",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Playtime Up to 60 hours (at 60% volume)",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "8+ years on Amazon",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "EMI starts at ₹3,305. No Cost EMI available EMI options",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Page 1 of 1 Start over",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "5+ years on Amazon",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Men and women of 18 years of age & above can use this",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Spend ₹2,999 or more and unlock instant savings of ₹700",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Earn upto 89 boAt reward points on this product",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "2.5 million customers trust and love our made-safe products",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Amazon Upgrade+: Guaranteed 50% Buyback by OneAssist for ₹2,899.00",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Available Offer",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "1 Year Total Protection by Acko for ₹1,312.00",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Earn upto 69 boAt reward points on this product",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "What is in the box?",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "You will be notified once the item is back in stock!",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "1 Year Total Protection by Acko for ₹1,530.00",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "You may check out all the available products and buy some in the shop",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Sold out",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "EMI starts at ₹844. No Cost EMI available EMI options",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Can I use this moisturizer every day?",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "For consumer complaints contact us at: 022-6918-1920 info@imaginemarketingindia.com Imagine Marketing Limited Address: Unit No. 204&205, D-wing & E-wing, Corporate Avenue, Andheri Ghatkopar Link Road, Andheri East, Mumbai-400093",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Pack:Pack of 2",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "2 Service Centers",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "app only offers at your fingertips",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "12+ years on Amazon",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "1 Year Total Damage Protection by Acko for ₹4,374.00",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Number of AI-ENx™ Equipped Mics 4",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "The extended warranty applies only if the product has a valid serial number on the product or box and the same unique serial number needs to be produced during warranty claim process.",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Pack: Pack of 1",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Pack:Pack of 1",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Please reach us on our new Customer Care Number +91 7435000861, OR Email us at Support@beardo.in",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "7000mAh Battery, 60W Fast Charge, 6.67inch Screen, 120Hz Display, Front & Rear Dual 50MP Cameras, Dimensity 6400 Max 5G, IP69",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Your cart is empty",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "YOUR CART IS EMPTY",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "© 2026 Imagine Marketing Limited. All Rights Reserved. For queries contact us: Manager, Imagine Marketing Limited Unit no. 204 & 205, 2nd floor, D-wing & E-wing, Corporate Avenue, Andheri Ghatkopar Link Road, Mumbai, Maharashtra-400093, India",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Add to Cart",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Add to cart",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "add to cart",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Your cart is feeling lonely",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "To see our price, add these items to your cart.",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "The extended warranty applies only to purchases made on the boAt website or boAt shopping app.",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "PERFORMANCE: Fastest Snapdragon 8 Elite Gen 5 Processor with TSMC's 3 nm process technology, and an impressive 4Mn+ AnTuTu score. In addition to that, it has LPDDR5X Ultra flagship-level RAM with UFS 4.1 Ultra-fast storage speed, 7000 mAh 4th Gen Silicon Anode Battery with 100W FlashCharge and 40W wireless charging.",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Your cart is currently empty.",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Item added to your cart",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "iQOO TWS 1e Earbuds, Intelligent ANC 30dB, Upto 42H Playback time, Fast Charging (10 mins = 3 Hours), Dual Pairing, DeepX 3.0 Stereo, True Wireless (Flame Yellow)",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Lava Bold N4 Pro 5G (Monaco Blue, 6GB RAM, 128GB Storage) | 50MP AI Rear Camera | 6000mAh Battery with 18W Fast Charge | 500K+ Antutu | IP64 Rated |Clean Android 16 | Free Service @ Home",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Limited Editions Earphone",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Pep Technologies Private Limited, A - 304, A wing, 3rd Floor, Boomerang Building, Yadav Nagar, Chandivali, Powai, Mumbai, Maharashtra - 400072, INDIA",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Sold by",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "FRAUD ALERT: Please ensure you make payments only on the Beardo website or to your delivery partner in case of cash on delivery.",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "realme 16T 5G Smartphone 8000mAh Batterya 45W Fast Charge, 6.8 inch 144Hz Display, 6GB RAM 128GB ROM, 50mp AI Rear Camera, MediaTek Dimensity 6300 Chipset, Android 16, IP69 Pro Starlight (Black)",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "realme 16T 5G Smartphone 8000mAh Batterya 45W Fast Charge, 6.8 inch 144Hz Display, 8GB RAM 128GB ROM, 50mp AI Rear Camera, MediaTek Dimensity 6300 Chipset, Android 16, IP69 Pro Starlight (Green)",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Limited Editions Headphones",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "6.67-Inch 120Hz Smooth Display for Immersive Use​ Enjoy ultra-smooth visuals on the 6.67-inch screen with 120Hz refresh rate—perfect for watching local movies, playing mobile games, scrolling social media, or viewing short videos. Vibrant colors stay clear even under strong Indian sunlight, ensuring a great viewing experience anytime, anywhere.",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "For external use only. Store in a cool & dry place.",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "All images shown are for illustration purpose only, actual results may vary.",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "OnePlus N6 Lite | 4GB+64GB | Neo Green | Massive 7000mAh Long-Lasting Battery | 120Hz Ultra Smooth Display | 36 Months Fast & Smooth | Military-Grade Durability",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Get lightning-fast delivery",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "No harsh chemicals and only natural ingredients",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Apply evenly. Wait a few minutes for it to dry. That’s it. Hair ready for whatever the night throws at you.",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "LARGE 17.53cm (6.9) SMOOTH 120Hz ADAPTIVE DISPLAY – Enjoy an immersive viewing experience with a smooth adaptive refresh rate, perfect for scrolling, streaming, and gaming",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "REDMI Note 17 5G (Arctic Blue, 6GB RAM, 128GB ROM) | 8000mAh Battery + 45W Fast Charging* | 6.99\" 120Hz TrueColour AMOLED | Snapdragon 4 Gen 4 | 50MP Dual AI Camera | Corning® Gorilla® Glass 7i | IP65",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Your Cart",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Limited Edition Speakers",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Redmi 17 5G (Eternal Orange, 6GB RAM, 128GB ROM) | 7900mAh Battery + 45W Fast Charging | 6.9\" 120Hz Adaptive Display | Snapdragon 4 Gen 5 | 50MP Dual AI Camera | Corning® Gorilla® Glass 7i | IP64",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "realme 15T 5G Smartphone 7000mAh Battery 6.57 inch 120Hz AMOLED Display 128GB ROM 8GB RAM 60W Fast Charge, IP69 Water Resistance Support Fingerprint GPS Bluetooth Dual Stereo Speakers (Flowing Silver)",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "The boAt Wave Fury Pro features a 1.83” (4.64 cm) Bright HD Display for a clear and vibrant viewing experience.",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "realme 16X 5G Smartphone 6.8 inch 144Hz Display 7000mAh Battery 45W Fast Charge 6GB RAM 256GB ROM 50MP AI Main Camera, MediaTek Dimensity 6300 Chipset, Android 16, IP65 White",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Frequently Bought",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Copyright © 2021, Acevector Limited. All Rights Reserved",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Honasa Consumer Limited, 10th and 11th Floor, Capital Cyberscape, Sector 59, Gurugram, Haryana, 122101",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Frequently bought together",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Log in Search Wishlist filter Cart 0",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Amazon Global Selling",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "© 2026 Honasa Consumer Limited. All rights reserved.",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Sold by Dawntech Etel! and ships from Amazon Fulfillment.",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Close cart",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Marketed By Imagine Marketing Limited, Unit No. 204 & 205, 2nd floor, D-Wing & E- wing, Corporate Avenue, Andheri Ghatkopar Link Road, Andheri East, Mumbai - 400093",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Your Shopping Cart",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "1.83” Bright HD Display: Enjoy a clear and vibrant viewing experience with a spacious 1.83” (4.64 cm) HD display.",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Fast Charging Power Bank",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "Popular Links",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  },
+  {
+   "text": "View cart",
+   "label": 0,
+   "category": "Not Dark Pattern"
+  }
+ ]
+}

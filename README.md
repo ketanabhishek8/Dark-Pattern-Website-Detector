@@ -23,9 +23,23 @@ The trained model (`app/model/`, about 256 MB) is too big for GitHub, so it isn'
 
 Open http://localhost:8000/?demo to scan the built-in sample shop straight away. That is the safest option for a live demo, because some real sites block automated requests. For those sites, use **Paste text** instead.
 
-To re-check the numbers in Table 2 of the report: `python app/evaluate.py`
+## How the model is trained and checked
 
-To check the whole pipeline on real product pages: `python app/eval_real_pages.py`. It uses 10 hand-labelled Amazon.in and Snapdeal pages (`app/real_pages/labels.json`), picks the decision threshold on the 5 dev pages and reports on the 5 test pages. The page snapshots stay local (`app/real_pages/html/`, not in git), so this needs the original machine or fresh snapshots.
+`app/train.py` trains one DistilBERT model with 6 classes (not a dark pattern, Scarcity, Urgency, Social Proof, Misdirection, Other) on:
+- the dataset's training split, split **by website** so the test set only contains sites the model hasn't seen (`app/data.py`)
+- Indian-style template lines (`app/india_data.py`)
+- 171 hand-labelled lines **mined from 17 real product pages** where the first model made mistakes (`app/real_pages/mined.json`)
+
+Two ways to check it:
+- `python app/evaluate.py`: scores on the dataset's test split and on 32 held-out Indian-style lines.
+- `python app/eval_real_pages.py`: runs the whole pipeline (page, then lines, then model) on hand-labelled product pages: 5 dev and 5 test pages from Amazon.in and Snapdeal, plus 6 pages from **sites never used in training** (`app/real_pages/labels.json`). The page snapshots stay local (`app/real_pages/html/`, not in git).
+
+| Real product pages (shipped threshold 0.97) | Test pages (Amazon/Snapdeal) | Unseen sites |
+|---|---|---|
+| First model (2-class) | F1 0.50, 1.8 false alarms per page | F1 0.22, 2.2 false alarms per page |
+| Current model (6-class, mined data) | F1 1.00, no false alarms | F1 0.80, no false alarms |
+
+The threshold was first chosen on the dev pages (step 3) and kept when the model was retrained. That decision was made after seeing the unseen-site results, so treat the unseen F1 as optimistic. The unseen and test sets are small (3 and 9 dark lines).
 
 ## Deploy to Hugging Face Spaces
 
